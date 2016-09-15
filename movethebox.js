@@ -43,16 +43,6 @@ mb.swap = function (si, sj, ei, ej) {
     mb.state[ei][ej] = temp;
 };
 
-mb.hide = function (i, j) {
-    if (i < 0 || j < 0 || i > 8 || j > 6)
-        return;
-    var e = document.getElementsByClassName('b' + i + j)[0];
-    mb.state[i][j] = 0;
-    var eClass = e.className;
-    e.className = eClass.replace(/ [a-z]/, "");
-};
-
-
 mb.isStable = function () {
     for (var j = 0; j < 7; j++) {
         var isEmpty = false;
@@ -88,7 +78,6 @@ mb.check = function () {
                 mb.todo[i][j + 2] = 1;
             }
 
-
     for (j = 0; j < 7; j++)
         for (i = 0; i < 7; i++)
             if (mb.state[i][j] === mb.state[i + 1][j] && mb.state[i][j] === mb.state[i + 2][j]) {
@@ -97,6 +86,16 @@ mb.check = function () {
                 mb.todo[i + 2][j] = 1;
             }
 
+    for (i = 0; i < 9; i++)
+        for (j = 0; j < 7; j++) {
+            if (mb.todo[i][j]) {
+                mb.state[i][j] = 0;
+                mb.todo[i][j] = 0;
+                var e = document.getElementsByClassName('b' + i + j)[0];
+                var eClass = e.className;
+                e.className = eClass.replace(/ [a-z]/, "");
+            }
+        }
 };
 
 mb.swapByHand = function (i, j) {
@@ -108,7 +107,12 @@ mb.swapByHand = function (i, j) {
             ee.style.boxShadow = "";
             var callBackFunc = function () {
                 ee.style = "";
-                ee.removeEventListener(mb.transitionEvent, callBackFunc);
+                if (mb.isStable())
+                    ee.removeEventListener(mb.transitionEvent, callBackFunc);
+                else {
+                    mb.fallDown();
+                    mb.check();
+                }
             };
             ee.addEventListener(mb.transitionEvent, callBackFunc);
             mb.swap(oi, oj, i, j);
@@ -151,13 +155,15 @@ mb.init = function (puzzle) {
                 skip = 0;
             }
             else {
-                var e = document.getElementsByClassName('b' + row + col);
-                if (e.length > 0) {
-                    e[0].className += ' ' + puzzle[i];
-                    mb.state[row][col] = puzzle[i].charCodeAt(0) - 96;
-                    skip = 0;
-                    col++;
+                for (var j = 0; j < (skip > 0 ? skip : 1); j++) {
+                    var e = document.getElementsByClassName('b' + row + col);
+                    if (e.length > 0) {
+                        e[0].className += ' ' + puzzle[i];
+                        mb.state[row][col] = puzzle[i].charCodeAt(0) - 96;
+                        col++;
+                    }
                 }
+                skip = 0;
             }
         }
         else {
@@ -171,5 +177,6 @@ mb.init = function (puzzle) {
 };
 
 window.onload = function () {
-    mb.init("3#aa$4#bcdefg$eqwfd!");
+    //mb.init("3#aa$4#bcdefg$eqwfd!");
+    mb.init("2#a2bc$2#2acb$2#b2a$3#2b$4#c$4#a!");
 };
