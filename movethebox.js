@@ -101,14 +101,20 @@ mb.check = function () {
 
 mb.swapByHand = function (i, j) {
     if (mb.boxToBeSwaped.length) {
-        var ee = document.getElementsByClassName('b' + mb.boxToBeSwaped[0] + mb.boxToBeSwaped[1])[0];
-        ee.style.boxShadow = "";
-        var callBackFunc = function () {
-            ee.style = "";
-            ee.removeEventListener(mb.transitionEvent,callBackFunc);
-        };
-        ee.addEventListener(mb.transitionEvent, callBackFunc);
-        mb.swap(mb.boxToBeSwaped[0], mb.boxToBeSwaped[1], i, j);
+        var oi = mb.boxToBeSwaped[0];
+        var oj = mb.boxToBeSwaped[1];
+        if ((i - oi) * (i - oi) + (j - oj) * (j - oj) === 1) {
+            var ee = document.getElementsByClassName('b' + oi + oj)[0];
+            ee.style.boxShadow = "";
+            var callBackFunc = function () {
+                ee.style = "";
+                ee.removeEventListener(mb.transitionEvent, callBackFunc);
+            };
+            ee.addEventListener(mb.transitionEvent, callBackFunc);
+            mb.swap(oi, oj, i, j);
+        }
+        else
+            document.getElementsByClassName('b' + oi + oj)[0].style = "";
         mb.boxToBeSwaped = [];
     }
     else {
@@ -137,7 +143,7 @@ mb.init = function (puzzle) {
                 skip = 0;
             }
             else if (puzzle[i] === '!') {
-                return;
+                break;
             }
             else if (puzzle[i] === '$') {
                 col = 0;
@@ -159,11 +165,11 @@ mb.init = function (puzzle) {
             skip += puzzle[i] - '0';
         }
     }
+    if (!mb.isStable()) {
+        mb.fallDown();
+    }
 };
 
 window.onload = function () {
     mb.init("3#aa$4#bcdefg$eqwfd!");
-    if (!mb.isStable()) {
-        mb.fallDown();
-    }
 };
