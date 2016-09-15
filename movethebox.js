@@ -4,12 +4,32 @@ mb.state = [new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(
 mb.todo = [new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7)];
 mb.boxToBeSwaped = [];
 
+// var e = document.getElementById("left1");
+
+mb.transitionEvent = (function () {
+    var t;
+    var el = document.createElement('fakeelement');
+    var transitions = {
+        'transition': 'transitionend',
+        'OTransition': 'oTransitionEnd',
+        'MozTransition': 'transitionend',
+        'WebkitTransition': 'webkitTransitionEnd',
+        'animationstart': 'animationend',
+        'webkitAnimationStart': 'webkitAnimationEnd',
+        'MSAnimationStart': 'MSAnimationEnd'
+    };
+    for (t in transitions) {
+        if (el.style[t] !== undefined) {
+            return transitions[t];
+        }
+    }
+})();
+
 mb.swap = function (si, sj, ei, ej) {
     if (si < 0 || sj < 0 || ei < 0 || ej < 0 || si > 8 || sj > 6 || ei > 8 || ej > 6)
         return;
     var s = document.getElementsByClassName('b' + si + sj)[0];
     var e = document.getElementsByClassName('b' + ei + ej)[0];
-    s.style.zIndex = 1;
     var sClass = s.className;
     var eClass = e.className;
     s.className = sClass.replace('b' + si + sj, 'b' + ei + ej);
@@ -21,17 +41,15 @@ mb.swap = function (si, sj, ei, ej) {
     var temp = mb.state[si][sj];
     mb.state[si][sj] = mb.state[ei][ej];
     mb.state[ei][ej] = temp;
-    s.style.zIndex = 0;
-    e.style.zIndex = 0;
 };
 
 mb.hide = function (i, j) {
     if (i < 0 || j < 0 || i > 8 || j > 6)
         return;
     var e = document.getElementsByClassName('b' + i + j)[0];
+    mb.state[i][j] = 0;
     var eClass = e.className;
     e.className = eClass.replace(/ [a-z]/, "");
-
 };
 
 
@@ -83,11 +101,28 @@ mb.check = function () {
 
 mb.swapByHand = function (i, j) {
     if (mb.boxToBeSwaped.length) {
+        var ee = document.getElementsByClassName('b' + mb.boxToBeSwaped[0] + mb.boxToBeSwaped[1])[0];
+        ee.style.boxShadow = "";
+        var callBackFunc = function () {
+            ee.style = "";
+            ee.removeEventListener(mb.transitionEvent,callBackFunc);
+        };
+        ee.addEventListener(mb.transitionEvent, callBackFunc);
         mb.swap(mb.boxToBeSwaped[0], mb.boxToBeSwaped[1], i, j);
         mb.boxToBeSwaped = [];
     }
     else {
         mb.boxToBeSwaped = [i, j];
+        var e = document.getElementsByClassName('b' + i + j)[0];
+        var color;
+        if (window.getComputedStyle) {
+            color = window.getComputedStyle(e).backgroundColor;
+        }
+        else {
+            color = e.currentStyle.backgroundColor;
+        }
+        e.style.boxShadow = "0 0 1px 1px " + color;
+        e.style.zIndex = 1;
     }
 };
 
