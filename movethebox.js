@@ -70,12 +70,14 @@ mb.fallDown = function () {
 };
 
 mb.check = function () {
+    var checkSuccess = true;
     for (var i = 0; i < 9; i++)
         for (var j = 0; j < 5; j++)
             if (mb.state[i][j] === mb.state[i][j + 1] && mb.state[i][j] === mb.state[i][j + 2]) {
                 mb.todo[i][j] = 1;
                 mb.todo[i][j + 1] = 1;
                 mb.todo[i][j + 2] = 1;
+                checkSuccess = false;
             }
 
     for (j = 0; j < 7; j++)
@@ -84,10 +86,14 @@ mb.check = function () {
                 mb.todo[i][j] = 1;
                 mb.todo[i + 1][j] = 1;
                 mb.todo[i + 2][j] = 1;
+                checkSuccess = false;
             }
+    return checkSuccess;
+};
 
-    for (i = 0; i < 9; i++)
-        for (j = 0; j < 7; j++) {
+mb.destoryBox = function () {
+    for (var i = 0; i < 9; i++)
+        for (var j = 0; j < 7; j++) {
             if (mb.todo[i][j]) {
                 mb.state[i][j] = 0;
                 mb.todo[i][j] = 0;
@@ -107,11 +113,14 @@ mb.swapByHand = function (i, j) {
             ee.style.boxShadow = "";
             var callBackFunc = function () {
                 ee.style = "";
-                if (mb.isStable())
-                    ee.removeEventListener(mb.transitionEvent, callBackFunc);
-                else {
+                if (!mb.isStable()) {
                     mb.fallDown();
-                    mb.check();
+                }
+                else if (!mb.check()) {
+                    mb.destoryBox();
+                }
+                else {
+                    ee.removeEventListener(mb.transitionEvent, callBackFunc);
                 }
             };
             ee.addEventListener(mb.transitionEvent, callBackFunc);
