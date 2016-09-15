@@ -140,7 +140,7 @@ mb.swapByHand = function (i, j) {
         else {
             color = e.currentStyle.backgroundColor;
         }
-        e.style.boxShadow = "0 0 1px 1px " + color;
+        e.style.boxShadow = "0 0 3px 3px " + color;
         e.style.zIndex = 1;
     }
 };
