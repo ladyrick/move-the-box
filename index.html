@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>move the box</title>
+    <link rel="stylesheet" type="text/css" href="movethebox.css"/>
+    <script src="movethebox.js"></script>
+    <script>
+        (function () {
+            document.write('<style>');
+            for (var i = 8; i >= 0; i--)
+                for (var j = 0; j < 7; j++) {
+                    var left = j * 30 + 1;
+                    var top = (8 - i) * 30 + 1;
+                    document.write("#containbox .b" + i + j + "{margin-left:" + left + "px;margin-top:" + top + "px;}\n");
+                }
+            var alphabet = "abcdefghijklmnopqrstuvwxyz";
+            for (i = 0; i < 26; i++) {
+                var cr, cg, cb;
+                var colormap = "048c";
+                cr = colormap[parseInt(Math.random() * 4)];
+                cg = colormap[parseInt(Math.random() * 4)];
+                cb = colormap[parseInt(Math.random() * 4)];
+                document.write("#containbox ." + alphabet[i] + "{box-shadow:0 0 5px #" + cr + cg + cb + ";background-color:#" + cr + cg + cb + ";}\n");
+            }
+            document.write('</style>');
+        })();
+    </script>
+</head>
+<body>
+<div id="containbox">
+    <script>
+        (function () {
+            for (var i = 8; i >= 0; i--)
+                for (var j = 0; j < 7; j++)
+                    document.write("<div class='b" + i + j + "' onclick='mb.swapByHand(" + i + "," + j + ")'></div>\n");
+        })();
+    </script>
+</div>
+</body>
+</html>

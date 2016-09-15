@@ -1,0 +1,28 @@
+div#containbox {
+    border: 2px solid;
+    box-shadow: 0 0 2px #000;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    width: 210px;
+    height: 270px;
+    margin: 100px auto 0 auto;
+}
+
+#containbox div {
+    border: none;
+    position: absolute;
+    display: inline-block;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin: 1px;
+    width: 28px;
+    height: 28px;
+    -webkit-transition: 1s;
+    -moz-transition: 1s;
+    -ms-transition: 1s;
+    -o-transition: 1s;
+    transition: 1s;
+    cursor: pointer;
+}
