@@ -78,7 +78,6 @@ mb.check = function () {
                 mb.todo[i][j + 2] = 1;
                 checkSuccess = false;
             }
-
     for (j = 0; j < 7; j++)
         for (i = 0; i < 7; i++)
             if (mb.state[i][j] !== 0 && mb.state[i][j] === mb.state[i + 1][j] && mb.state[i][j] === mb.state[i + 2][j]) {
@@ -128,7 +127,6 @@ mb.swapByHand = function (i, j) {
                     mb.isMoving = 0;
                     ee.style = "";
                     document.getElementById("containbox").className = "pointer";
-
                 }
             };
             setTimeout(moving, timeout);
