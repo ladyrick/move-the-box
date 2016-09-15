@@ -3,8 +3,7 @@ var mb = {};
 mb.state = [new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7)];
 mb.todo = [new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7)];
 mb.boxToBeSwaped = [];
-
-// var e = document.getElementById("left1");
+mb.isMoving = 0;
 
 mb.transitionEvent = (function () {
     var t;
@@ -73,7 +72,7 @@ mb.check = function () {
     var checkSuccess = true;
     for (var i = 0; i < 9; i++)
         for (var j = 0; j < 5; j++)
-            if (mb.state[i][j] === mb.state[i][j + 1] && mb.state[i][j] === mb.state[i][j + 2]) {
+            if (mb.state[i][j] !== 0 && mb.state[i][j] === mb.state[i][j + 1] && mb.state[i][j] === mb.state[i][j + 2]) {
                 mb.todo[i][j] = 1;
                 mb.todo[i][j + 1] = 1;
                 mb.todo[i][j + 2] = 1;
@@ -82,7 +81,7 @@ mb.check = function () {
 
     for (j = 0; j < 7; j++)
         for (i = 0; i < 7; i++)
-            if (mb.state[i][j] === mb.state[i + 1][j] && mb.state[i][j] === mb.state[i + 2][j]) {
+            if (mb.state[i][j] !== 0 && mb.state[i][j] === mb.state[i + 1][j] && mb.state[i][j] === mb.state[i + 2][j]) {
                 mb.todo[i][j] = 1;
                 mb.todo[i + 1][j] = 1;
                 mb.todo[i + 2][j] = 1;
@@ -109,22 +108,30 @@ mb.swapByHand = function (i, j) {
         var oi = mb.boxToBeSwaped[0];
         var oj = mb.boxToBeSwaped[1];
         if ((i - oi) * (i - oi) + (j - oj) * (j - oj) === 1) {
+            document.getElementById("containbox").className = "wait";
             var ee = document.getElementsByClassName('b' + oi + oj)[0];
+            mb.isMoving++;
             ee.style.boxShadow = "";
-            var callBackFunc = function () {
-                ee.style = "";
+            mb.swap(oi, oj, i, j);
+
+            var timeout = 350;
+            var moving = function () {
                 if (!mb.isStable()) {
                     mb.fallDown();
+                    setTimeout(moving, timeout);
                 }
                 else if (!mb.check()) {
                     mb.destoryBox();
+                    setTimeout(moving, timeout);
                 }
                 else {
-                    ee.removeEventListener(mb.transitionEvent, callBackFunc);
+                    mb.isMoving = 0;
+                    ee.style = "";
+                    document.getElementById("containbox").className = "pointer";
+
                 }
             };
-            ee.addEventListener(mb.transitionEvent, callBackFunc);
-            mb.swap(oi, oj, i, j);
+            setTimeout(moving, timeout);
         }
         else
             document.getElementsByClassName('b' + oi + oj)[0].style = "";
@@ -169,6 +176,7 @@ mb.init = function (puzzle) {
                     if (e.length > 0) {
                         e[0].className += ' ' + puzzle[i];
                         mb.state[row][col] = puzzle[i].charCodeAt(0) - 96;
+                        e[0].setAttribute("cursor", "set");
                         col++;
                     }
                 }
@@ -186,6 +194,5 @@ mb.init = function (puzzle) {
 };
 
 window.onload = function () {
-    //mb.init("3#aa$4#bcdefg$eqwfd!");
     mb.init("2#a2bc$2#2acb$2#b2a$3#2b$4#c$4#a!");
 };

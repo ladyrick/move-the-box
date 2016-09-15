@@ -28,12 +28,12 @@
     </script>
 </head>
 <body>
-<div id="containbox">
+<div id="containbox" class="pointer">
     <script>
         (function () {
             for (var i = 8; i >= 0; i--)
                 for (var j = 0; j < 7; j++)
-                    document.write("<div class='b" + i + j + "' onclick='mb.swapByHand(" + i + "," + j + ")'></div>\n");
+                    document.write("<div class='b" + i + j + "' onclick='mb.isMoving||mb.swapByHand(" + i + "," + j + ")'></div>\n");
         })();
     </script>
 </div>
