@@ -4,25 +4,7 @@ mb.state = [new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(
 mb.todo = [new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7)];
 mb.boxToBeSwaped = [];
 mb.isMoving = 0;
-
-mb.transitionEvent = (function () {
-    var t;
-    var el = document.createElement('fakeelement');
-    var transitions = {
-        'transition': 'transitionend',
-        'OTransition': 'oTransitionEnd',
-        'MozTransition': 'transitionend',
-        'WebkitTransition': 'webkitTransitionEnd',
-        'animationstart': 'animationend',
-        'webkitAnimationStart': 'webkitAnimationEnd',
-        'MSAnimationStart': 'MSAnimationEnd'
-    };
-    for (t in transitions) {
-        if (el.style[t] !== undefined) {
-            return transitions[t];
-        }
-    }
-})();
+mb.solution = [];
 
 mb.swap = function (si, sj, ei, ej) {
     if (si < 0 || sj < 0 || ei < 0 || ej < 0 || si > 8 || sj > 6 || ei > 8 || ej > 6)
@@ -42,11 +24,11 @@ mb.swap = function (si, sj, ei, ej) {
     mb.state[ei][ej] = temp;
 };
 
-mb.isStable = function () {
+mb.isStable = function (state) {
     for (var j = 0; j < 7; j++) {
         var isEmpty = false;
         for (var i = 0; i < 9; i++) {
-            if (mb.state[i][j] === 0)
+            if (state[i][j] === 0)
                 isEmpty = true;
             else if (isEmpty)
                 return false;
@@ -68,22 +50,22 @@ mb.fallDown = function () {
     }
 };
 
-mb.check = function () {
+mb.check = function (state, todo) {
     var checkSuccess = true;
     for (var i = 0; i < 9; i++)
         for (var j = 0; j < 5; j++)
-            if (mb.state[i][j] !== 0 && mb.state[i][j] === mb.state[i][j + 1] && mb.state[i][j] === mb.state[i][j + 2]) {
-                mb.todo[i][j] = 1;
-                mb.todo[i][j + 1] = 1;
-                mb.todo[i][j + 2] = 1;
+            if (state[i][j] !== 0 && state[i][j] === state[i][j + 1] && state[i][j] === state[i][j + 2]) {
+                todo[i][j] = 1;
+                todo[i][j + 1] = 1;
+                todo[i][j + 2] = 1;
                 checkSuccess = false;
             }
     for (j = 0; j < 7; j++)
         for (i = 0; i < 7; i++)
-            if (mb.state[i][j] !== 0 && mb.state[i][j] === mb.state[i + 1][j] && mb.state[i][j] === mb.state[i + 2][j]) {
-                mb.todo[i][j] = 1;
-                mb.todo[i + 1][j] = 1;
-                mb.todo[i + 2][j] = 1;
+            if (state[i][j] !== 0 && state[i][j] === state[i + 1][j] && state[i][j] === state[i + 2][j]) {
+                todo[i][j] = 1;
+                todo[i + 1][j] = 1;
+                todo[i + 2][j] = 1;
                 checkSuccess = false;
             }
     return checkSuccess;
@@ -98,14 +80,141 @@ mb.destoryBox = function () {
                 var e = document.getElementsByClassName('b' + i + j)[0];
                 var eClass = e.className;
                 e.className = eClass.replace(/ [a-z]/, "");
+                e.removeAttribute("cursor");
             }
         }
+};
+
+mb.getSolution = function (state, steplimit) {
+    var solved = true;
+    for (var i = 0; i < 9; i++)
+        for (var j = 0; j < 7; j++)
+            if (state[i][j] !== 0)
+                solved = false;
+    if (solved)
+        return true;
+    else {
+        if (steplimit === 0)
+            return false;
+        var swap = function (i1, j1, i2, j2) {
+            if (i1 > 8 || j1 > 6 || i2 > 8 || j2 > 6 || state[i1][j1] === state[i2][j2])
+                return [];
+            var temp;
+            var tempstate = [];
+            state.forEach(function (t) {
+                tempstate.push(t.slice())
+            });
+            temp = tempstate[i1][j1];
+            tempstate[i1][j1] = tempstate[i2][j2];
+            tempstate[i2][j2] = temp;
+            return tempstate;
+        };
+        var todo = [new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7)];
+        for (i = 0; i < 9; i++)
+            for (j = 0; j < 7; j++) {
+                var d = [[1, 0], [0, 1]];
+                for (var k = 0; k < 2; k++) {
+                    var temp = swap(i, j, i + d[k][0], j + d[k][1]);
+                    if (temp.length === 0) {
+                        continue;
+                    }
+                    var finish = false;
+                    while (!finish) {
+                        finish = true;
+                        if (!mb.isStable(temp)) {
+                            (function () {
+                                for (var j = 0; j < 7; j++) {
+                                    var empthNum = 0;
+                                    for (var i = 0; i < 9; i++) {
+                                        if (temp[i][j] === 0)
+                                            empthNum++;
+                                        else if (empthNum > 0) {
+                                            var t;
+                                            temp[i - empthNum][j] = temp[i][j];
+                                            temp[i][j] = 0;
+                                        }
+                                    }
+                                }
+                            })();
+                            finish = false;
+                        }
+                        else if (!mb.check(temp, todo)) {
+                            (function () {
+                                for (var i = 0; i < 9; i++)
+                                    for (var j = 0; j < 7; j++) {
+                                        if (todo[i][j]) {
+                                            temp[i][j] = 0;
+                                            todo[i][j] = 0;
+                                        }
+                                    }
+                            })();
+                            finish = false;
+                        }
+                    }
+                    if (mb.getSolution(temp, steplimit - 1)) {
+                        mb.solution.push([i, j, i + d[k][0], j + d[k][1]]);
+                        return true;
+                    }
+                }
+            }
+    }
+    return false;
+};
+
+mb.autoSolve = function () {
+    if (mb.isMoving)
+        return "is moving.";
+    var solved = true;
+    for (var i = 0; i < 9; i++)
+        for (var j = 0; j < 7; j++)
+            if (mb.state[i][j] !== 0)
+                solved = false;
+    if (solved)
+        return "already solved";
+    if (!mb.getSolution(mb.state, 2))
+        return "unsolveable;";
+    mb.isMoving = true;
+    document.getElementById("containbox").className = "wait";
+    var timeout = 350;
+    var l = mb.solution.length - 1;
+    var finish = true;
+    var moving = function () {
+        if (finish) {
+            mb.swap(mb.solution[l][0], mb.solution[l][1], mb.solution[l][2], mb.solution[l][3]);
+            l--;
+            mb.solution.pop();
+            finish = false;
+            setTimeout(moving, timeout);
+        }
+        else if (!mb.isStable(mb.state)) {
+            mb.fallDown();
+            setTimeout(moving, timeout);
+        }
+        else if (!mb.check(mb.state, mb.todo)) {
+            mb.destoryBox();
+            setTimeout(moving, timeout);
+        }
+        else if (l >= 0) {
+            finish = true;
+            setTimeout(moving, timeout);
+        }
+        else {
+            mb.isMoving = 0;
+            document.getElementById("containbox").className = "pointer";
+        }
+    };
+    moving();
+
 };
 
 mb.swapByHand = function (i, j) {
     if (mb.boxToBeSwaped.length) {
         var oi = mb.boxToBeSwaped[0];
         var oj = mb.boxToBeSwaped[1];
+        if (mb.state[i][j] === 0 && mb.state[oi][oj] === 0){
+            mb.boxToBeSwaped = [i, j];
+            return;
+        }
         if ((i - oi) * (i - oi) + (j - oj) * (j - oj) === 1) {
             document.getElementById("containbox").className = "wait";
             var ee = document.getElementsByClassName('b' + oi + oj)[0];
@@ -115,11 +224,11 @@ mb.swapByHand = function (i, j) {
 
             var timeout = 350;
             var moving = function () {
-                if (!mb.isStable()) {
+                if (!mb.isStable(mb.state)) {
                     mb.fallDown();
                     setTimeout(moving, timeout);
                 }
-                else if (!mb.check()) {
+                else if (!mb.check(mb.state, mb.todo)) {
                     mb.destoryBox();
                     setTimeout(moving, timeout);
                 }
@@ -137,6 +246,8 @@ mb.swapByHand = function (i, j) {
     }
     else {
         mb.boxToBeSwaped = [i, j];
+        if (mb.state[i][j] === 0)
+            return;
         var e = document.getElementsByClassName('b' + i + j)[0];
         var color;
         if (window.getComputedStyle) {
@@ -174,7 +285,7 @@ mb.init = function (puzzle) {
                     if (e.length > 0) {
                         e[0].className += ' ' + puzzle[i];
                         mb.state[row][col] = puzzle[i].charCodeAt(0) - 96;
-                        e[0].setAttribute("cursor", "set");
+                        e[0].setAttribute("cursor", "pointer");
                         col++;
                     }
                 }
@@ -186,7 +297,7 @@ mb.init = function (puzzle) {
             skip += puzzle[i] - '0';
         }
     }
-    if (!mb.isStable()) {
+    if (!mb.isStable(mb.state)) {
         mb.fallDown();
     }
 };
