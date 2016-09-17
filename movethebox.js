@@ -129,7 +129,6 @@ mb.getSolution = function (state, steplimit) {
                                         if (temp[i][j] === 0)
                                             empthNum++;
                                         else if (empthNum > 0) {
-                                            var t;
                                             temp[i - empthNum][j] = temp[i][j];
                                             temp[i][j] = 0;
                                         }
