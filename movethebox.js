@@ -3,25 +3,50 @@ var mb = {};
 mb.state = [new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7)];
 mb.todo = [new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7)];
 mb.boxToBeSwaped = [];
-mb.isMoving = 0;
+mb.isMoving = false;
 mb.solution = [];
+mb.placeMode = false;
+mb.stepLimit = 0;
+mb.currentColor = "a";
 
 mb.swap = function (si, sj, ei, ej) {
     if (si < 0 || sj < 0 || ei < 0 || ej < 0 || si > 8 || sj > 6 || ei > 8 || ej > 6)
         return;
-    var s = document.getElementsByClassName('b' + si + sj)[0];
-    var e = document.getElementsByClassName('b' + ei + ej)[0];
-    var sClass = s.className;
-    var eClass = e.className;
-    s.className = sClass.replace('b' + si + sj, 'b' + ei + ej);
-    e.className = eClass.replace('b' + ei + ej, 'b' + si + sj);
-    var sCallBack = s.getAttribute('onclick');
-    var eCallBack = e.getAttribute('onclick');
-    s.setAttribute('onclick', sCallBack.replace(si + ',' + sj, ei + ',' + ej));
-    e.setAttribute('onclick', eCallBack.replace(ei + ',' + ej, si + ',' + sj));
-    var temp = mb.state[si][sj];
+    var s = document.getElementById('b' + si + sj);
+    var e = document.getElementById('b' + ei + ej);
+    var temp = s.className;
+    s.className = e.className;
+    e.className = temp;
+    if (s.className === "")
+        s.removeAttribute("class");
+    if (e.className === "")
+        e.removeAttribute("class");
+    temp = mb.state[si][sj];
     mb.state[si][sj] = mb.state[ei][ej];
     mb.state[ei][ej] = temp;
+};
+
+mb.placeBox = function (i, j) {
+    switch (event.button) {
+        case 0: {
+            document.getElementById('b' + i + j).className = mb.currentColor;
+            mb.state[i][j] = mb.currentColor.charCodeAt(0) - 96;
+            break;
+        }
+        case 1: {
+            document.getElementById('b' + i + j).removeAttribute("class");
+            mb.state[i][j] = 0;
+            break;
+        }
+        case 2: {
+            if (mb.state[i][j] === 0)
+                mb.currentColor = String.fromCharCode((mb.currentColor.charCodeAt(0) - 97 + 1) % 12 + 97);
+            else
+                mb.currentColor = document.getElementById('b' + i + j).className;
+            break;
+        }
+        default:
+    }
 };
 
 mb.isStable = function (state) {
@@ -77,10 +102,8 @@ mb.destoryBox = function () {
             if (mb.todo[i][j]) {
                 mb.state[i][j] = 0;
                 mb.todo[i][j] = 0;
-                var e = document.getElementsByClassName('b' + i + j)[0];
-                var eClass = e.className;
-                e.className = eClass.replace(/ [a-z]/, "");
-                e.removeAttribute("cursor");
+                var e = document.getElementById('b' + i + j);
+                e.removeAttribute("class");
             }
         }
 };
@@ -160,6 +183,15 @@ mb.getSolution = function (state, steplimit) {
     return false;
 };
 
+mb.onmousedownfunc = function (i, j) {
+    if (mb.isMoving)
+        return;
+    if (mb.placeMode)
+        mb.placeBox(i, j);
+    else
+        mb.swapByHand(i, j);
+};
+
 mb.autoSolve = function () {
     if (mb.isMoving)
         return "is moving.";
@@ -170,7 +202,7 @@ mb.autoSolve = function () {
                 solved = false;
     if (solved)
         return "already solved";
-    if (!mb.getSolution(mb.state, 2))
+    if (!mb.getSolution(mb.state, mb.stepLimit))
         return "unsolveable;";
     mb.isMoving = true;
     document.getElementById("containbox").className = "wait";
@@ -198,7 +230,7 @@ mb.autoSolve = function () {
             setTimeout(moving, timeout);
         }
         else {
-            mb.isMoving = 0;
+            mb.isMoving = false;
             document.getElementById("containbox").className = "pointer";
         }
     };
@@ -215,9 +247,9 @@ mb.swapByHand = function (i, j) {
         }
         if ((i - oi) * (i - oi) + (j - oj) * (j - oj) === 1) {
             document.getElementById("containbox").className = "wait";
-            var ee = document.getElementsByClassName('b' + oi + oj)[0];
-            mb.isMoving++;
-            ee.style.boxShadow = "";
+            var e1 = document.getElementById('b' + oi + oj);
+            mb.isMoving = true;
+            e1.style.boxShadow = "";
             mb.swap(oi, oj, i, j);
 
             var timeout = 350;
@@ -231,35 +263,39 @@ mb.swapByHand = function (i, j) {
                     setTimeout(moving, timeout);
                 }
                 else {
-                    mb.isMoving = 0;
-                    ee.style.zIndex = "";
+                    mb.isMoving = false;
+                    e1.style.zIndex = "";
                     document.getElementById("containbox").className = "pointer";
                 }
             };
             setTimeout(moving, timeout);
         }
-        else
-            document.getElementsByClassName('b' + oi + oj)[0].style = "";
+        else {
+            e1 = document.getElementById('b' + oi + oj).style;
+            e1.boxShadow = "";
+            e1.zIndex = "";
+        }
         mb.boxToBeSwaped = [];
     }
     else {
         mb.boxToBeSwaped = [i, j];
         if (mb.state[i][j] === 0)
             return;
-        var e = document.getElementsByClassName('b' + i + j)[0];
         var color;
+        var e2 = document.getElementById('b' + i + j);
         if (window.getComputedStyle) {
-            color = window.getComputedStyle(e).backgroundColor;
+            color = window.getComputedStyle(e2).backgroundColor;
         }
         else {
-            color = e.currentStyle.backgroundColor;
+            color = e2.currentStyle.backgroundColor;
         }
-        e.style.boxShadow = "0 0 3px 3px " + color;
-        e.style.zIndex = 1;
+        e2.style.boxShadow = "0 0 3px 3px " + color;
+        e2.style.zIndex = 1;
     }
 };
 
-mb.init = function (puzzle) {
+mb.init = function (steplimit, puzzle) {
+    mb.stepLimit = steplimit;
     var skip = 0;
     var col = 0;
     var row = 0;
@@ -280,11 +316,10 @@ mb.init = function (puzzle) {
             else {
                 var c = String.fromCharCode(puzzle[i].charCodeAt(0) % 12 + 97);
                 for (var j = 0; j < (skip > 0 ? skip : 1); j++) {
-                    var e = document.getElementsByClassName('b' + row + col);
-                    if (e.length > 0) {
-                        e[0].className += ' ' + c;
+                    var e = document.getElementById('b' + row + col);
+                    if (typeof e !== "undefined") {
+                        e.className += c;
                         mb.state[row][col] = c.charCodeAt(0) - 96;
-                        e[0].setAttribute("cursor", "pointer");
                         col++;
                     }
                 }
@@ -302,8 +337,5 @@ mb.init = function (puzzle) {
 };
 
 window.onload = function () {
-    // mb.init("2#a2bc$2#2acb$2#b2a$3#2b$4#c$4#a!");
-    // mb.init("#abcba$2#cbc$2#dcd$2#ada$3#c$3#a!");
-    // mb.init("2#aba$2#bab$2#aba$2#bab$2#aba$2#ba$3#b!");
-    mb.init("abcdefg$hijklmn$opqrstu$vwxyz!")
+    mb.init(2, "2#a2bc$2#2acb$2#b2a$3#2b$4#c$4#a!");
 };

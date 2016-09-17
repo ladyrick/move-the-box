@@ -12,7 +12,7 @@
                 for (var j = 0; j < 7; j++) {
                     var left = j * 60 + 1;
                     var top = (8 - i) * 60 + 1;
-                    document.write("#containbox .b" + i + j + "{margin-left:" + left + "px;margin-top:" + top + "px;}\n");
+                    document.write("#containbox #b" + i + j + "{margin-left:" + left + "px;margin-top:" + top + "px;}\n");
                 }
             var colormap = ['050', '0a5', '05a', '005', '500', '5a0', '5aa', '50a', 'a50', 'aa5', 'a5a', 'a05'];
             colormap.sort(function () {
@@ -26,12 +26,13 @@
     </script>
 </head>
 <body>
-<div id="containbox" class="pointer">
+<div id="containbox" class="pointer" oncontextmenu=self.event.returnValue=false>
     <script>
         (function () {
             for (var i = 8; i >= 0; i--)
-                for (var j = 0; j < 7; j++)
-                    document.write("<div class='b" + i + j + "' onclick='mb.isMoving||mb.swapByHand(" + i + "," + j + ")'></div>\n");
+                for (var j = 0; j < 7; j++) {
+                    document.write("<div id='b" + i + j + "' onmousedown='mb.onmousedownfunc(" + i + "," + j + ")'></div>\n");
+                }
         })();
     </script>
 </div>
