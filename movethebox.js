@@ -203,14 +203,13 @@ mb.autoSolve = function () {
         }
     };
     moving();
-
 };
 
 mb.swapByHand = function (i, j) {
     if (mb.boxToBeSwaped.length) {
         var oi = mb.boxToBeSwaped[0];
         var oj = mb.boxToBeSwaped[1];
-        if (mb.state[i][j] === 0 && mb.state[oi][oj] === 0){
+        if (mb.state[i][j] === 0 && mb.state[oi][oj] === 0) {
             mb.boxToBeSwaped = [i, j];
             return;
         }
@@ -233,7 +232,7 @@ mb.swapByHand = function (i, j) {
                 }
                 else {
                     mb.isMoving = 0;
-                    ee.style = "";
+                    ee.style.zIndex = "";
                     document.getElementById("containbox").className = "pointer";
                 }
             };
@@ -279,11 +278,12 @@ mb.init = function (puzzle) {
                 skip = 0;
             }
             else {
+                var c = String.fromCharCode(puzzle[i].charCodeAt(0) % 12 + 97);
                 for (var j = 0; j < (skip > 0 ? skip : 1); j++) {
                     var e = document.getElementsByClassName('b' + row + col);
                     if (e.length > 0) {
-                        e[0].className += ' ' + puzzle[i];
-                        mb.state[row][col] = puzzle[i].charCodeAt(0) - 96;
+                        e[0].className += ' ' + c;
+                        mb.state[row][col] = c.charCodeAt(0) - 96;
                         e[0].setAttribute("cursor", "pointer");
                         col++;
                     }
@@ -302,5 +302,8 @@ mb.init = function (puzzle) {
 };
 
 window.onload = function () {
-    mb.init("2#a2bc$2#2acb$2#b2a$3#2b$4#c$4#a!");
+    // mb.init("2#a2bc$2#2acb$2#b2a$3#2b$4#c$4#a!");
+    // mb.init("#abcba$2#cbc$2#dcd$2#ada$3#c$3#a!");
+    // mb.init("2#aba$2#bab$2#aba$2#bab$2#aba$2#ba$3#b!");
+    mb.init("abcdefg$hijklmn$opqrstu$vwxyz!")
 };
