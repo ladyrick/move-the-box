@@ -5,7 +5,7 @@ mb.todo = [new Int8Array(7), new Int8Array(7), new Int8Array(7), new Int8Array(7
 mb.boxToBeSwaped = [];
 mb.isMoving = false;
 mb.solution = [];
-mb.placeMode = false;
+mb.placeMode = true;
 mb.stepLimit = 0;
 mb.currentColor = "a";
 
@@ -208,6 +208,14 @@ mb.autoSolve = function () {
     else
         mb.stepLimit = i;
     mb.isMoving = true;
+    var statebackup = [];
+    mb.state.forEach(function (e) {
+        statebackup.push(e.slice());
+    });
+    var solutionbackup = [];
+    mb.solution.forEach(function (e) {
+        solutionbackup.push(e.slice());
+    });
     document.getElementById("containbox").className = "wait";
     var timeout = 350;
     var l = mb.solution.length - 1;
@@ -238,6 +246,7 @@ mb.autoSolve = function () {
         }
     };
     moving();
+    return [statebackup, solutionbackup];
 };
 
 mb.swapByHand = function (i, j) {
@@ -297,6 +306,47 @@ mb.swapByHand = function (i, j) {
     }
 };
 
+mb.addList = function () {
+    var r = mb.autoSolve();
+    mb.currentColor = 'a';
+    if (typeof r === "object") {
+        var state = r[0];
+        var solution = r[1];
+        var puzzle = "";
+        for (var i = 0; i < 9; i++) {
+            var c = state[i][0];
+            var n = 1;
+            for (var j = 1; j < 7; j++) {
+                if (state[i][j] === c) {
+                    n++;
+                }
+                else {
+                    c = "#abcdefghijkl"[c];
+                    puzzle += n === 1 ? c : '' + n + c;
+                    c = state[i][j];
+                    n = 1;
+                }
+            }
+            puzzle += '$';
+        }
+        for (i = puzzle.length - 1; i >= 0; i--) {
+            if (puzzle[i] === '$')
+                puzzle = puzzle.substring(0, i);
+            else
+                break;
+        }
+        puzzle += '!';
+        solution.reverse();
+        var s = "";
+        solution.forEach(function (e) {
+            s += "" + (e[0] + 1)  + (e[1] + 1) + "-" + (e[2] + 1)  + (e[3] + 1) + " ";
+        });
+        var newlist = document.createElement('p');
+        newlist.innerHTML = "<strong>" + mb.stepLimit + "</strong>" + puzzle + "<strong>" + s + "</strong>";
+        document.getElementById("list").appendChild(newlist);
+    }
+};
+
 mb.init = function (steplimit, puzzle) {
     mb.stepLimit = steplimit;
     var skip = 0;
@@ -340,5 +390,5 @@ mb.init = function (steplimit, puzzle) {
 };
 
 window.onload = function () {
-    mb.init(2, "2#a2bc$2#2acb$2#b2a$3#2b$4#c$4#a!");
+    //mb.init(2, "2#a2bc$2#2acb$2#b2a$3#2b$4#c$4#a!");
 };
