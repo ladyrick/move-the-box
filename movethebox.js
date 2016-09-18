@@ -14,14 +14,11 @@ mb.swap = function (si, sj, ei, ej) {
         return;
     var s = document.getElementById('b' + si + sj);
     var e = document.getElementById('b' + ei + ej);
-    var temp = s.className;
-    s.className = e.className;
-    e.className = temp;
-    if (s.className === "")
-        s.removeAttribute("class");
-    if (e.className === "")
-        e.removeAttribute("class");
-    temp = mb.state[si][sj];
+    s.setAttribute('id', 'b' + ei + ej);
+    e.setAttribute('id', 'b' + si + sj);
+    s.setAttribute('onmousedown', 'mb.onmousedownfunc(' + ei + ',' + ej + ')');
+    e.setAttribute('onmousedown', 'mb.onmousedownfunc(' + si + ',' + sj + ')');
+    var temp = mb.state[si][sj];
     mb.state[si][sj] = mb.state[ei][ej];
     mb.state[ei][ej] = temp;
 };
@@ -202,8 +199,14 @@ mb.autoSolve = function () {
                 solved = false;
     if (solved)
         return "already solved";
-    if (!mb.getSolution(mb.state, mb.stepLimit))
+    for (i = 1; i < 5; i++) {
+        if (mb.getSolution(mb.state, i))
+            break;
+    }
+    if (i === 5)
         return "unsolveable;";
+    else
+        mb.stepLimit = i;
     mb.isMoving = true;
     document.getElementById("containbox").className = "wait";
     var timeout = 350;
