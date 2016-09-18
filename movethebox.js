@@ -339,7 +339,7 @@ mb.addList = function () {
         solution.reverse();
         var s = "";
         solution.forEach(function (e) {
-            s += "" + (e[0] + 1)  + (e[1] + 1) + "-" + (e[2] + 1)  + (e[3] + 1) + " ";
+            s += "" + (e[0] + 1) + (e[1] + 1) + "-" + (e[2] + 1) + (e[3] + 1) + " ";
         });
         var newlist = document.createElement('p');
         newlist.innerHTML = "<strong>" + mb.stepLimit + "</strong>" + puzzle + "<strong>" + s + "</strong>";
