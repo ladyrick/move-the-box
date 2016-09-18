@@ -388,7 +388,3 @@ mb.init = function (steplimit, puzzle) {
         mb.fallDown();
     }
 };
-
-window.onload = function () {
-    mb.init(2, "2#a2bc$2#2acb$2#b2a$3#2b$4#c$4#a!");
-};
