@@ -322,12 +322,17 @@ mb.addList = function () {
                 }
                 else {
                     c = "#abcdefghijkl"[c];
-                    puzzle += n === 1 ? c : '' + n + c;
+                    puzzle += n === 1 ? c : ('' + n + c);
                     c = state[i][j];
                     n = 1;
                 }
             }
-            puzzle += '$';
+            if (c === 0)
+                puzzle += '$';
+            else {
+                c = "#abcdefghijkl"[c];
+                puzzle += (n === 1 ? c : ('' + n + c)) + "$";
+            }
         }
         for (i = puzzle.length - 1; i >= 0; i--) {
             if (puzzle[i] === '$')
@@ -367,7 +372,7 @@ mb.init = function (steplimit, puzzle) {
                 skip = 0;
             }
             else {
-                var c = String.fromCharCode(puzzle[i].charCodeAt(0) % 12 + 97);
+                var c = String.fromCharCode((puzzle.charCodeAt(i) - 97) % 12 + 97);
                 for (var j = 0; j < (skip > 0 ? skip : 1); j++) {
                     var e = document.getElementById('b' + row + col);
                     if (typeof e !== "undefined") {
@@ -388,3 +393,18 @@ mb.init = function (steplimit, puzzle) {
         mb.fallDown();
     }
 };
+
+var i = 6;
+var flag = true;
+function t() {
+    if (i < 24) {
+        if (flag)
+            mb.init(p5[i][0], p5[i][1]);
+
+        else {
+            setTimeout("mb.addList()", 350);
+            i++;
+        }
+        flag = !flag;
+    }
+}
