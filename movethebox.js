@@ -394,12 +394,12 @@ mb.init = function (steplimit, puzzle) {
     }
 };
 
-var i = 6;
+var i = 0;
 var flag = true;
 function t() {
     if (i < 24) {
         if (flag)
-            mb.init(p5[i][0], p5[i][1]);
+            mb.init(p8[i][0], p8[i][1]);
 
         else {
             setTimeout("mb.addList()", 350);
