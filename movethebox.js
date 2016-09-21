@@ -105,6 +105,8 @@ mb.destoryBox = function () {
         }
 };
 
+mb.stepNum = 0;
+
 mb.getSolution = function (state, steplimit) {
     var solved = true;
     for (var i = 0; i < 9; i++)
@@ -114,6 +116,7 @@ mb.getSolution = function (state, steplimit) {
     if (solved)
         return true;
     else {
+        var stepNum = mb.stepNum;
         if (steplimit === 0)
             return false;
         var swap = function (i1, j1, i2, j2) {
@@ -134,6 +137,8 @@ mb.getSolution = function (state, steplimit) {
             for (j = 0; j < 7; j++) {
                 var d = [[1, 0], [0, 1]];
                 for (var k = 0; k < 2; k++) {
+                    mb.stepNum = stepNum;
+                    mb.stepNum++;
                     var temp = swap(i, j, i + d[k][0], j + d[k][1]);
                     if (temp.length === 0) {
                         continue;
@@ -142,6 +147,7 @@ mb.getSolution = function (state, steplimit) {
                     while (!finish) {
                         finish = true;
                         if (!mb.isStable(temp)) {
+                            mb.stepNum++;
                             (function () {
                                 for (var j = 0; j < 7; j++) {
                                     var empthNum = 0;
@@ -158,6 +164,7 @@ mb.getSolution = function (state, steplimit) {
                             finish = false;
                         }
                         else if (!mb.check(temp, todo)) {
+                            mb.stepNum++;
                             (function () {
                                 for (var i = 0; i < 9; i++)
                                     for (var j = 0; j < 7; j++) {
@@ -190,6 +197,7 @@ mb.onmousedownfunc = function (i, j) {
 };
 
 mb.autoSolve = function () {
+    mb.stepNum = 0;
     if (mb.isMoving)
         return "is moving.";
     var solved = true;
@@ -400,7 +408,6 @@ function t() {
     if (i < 24) {
         if (flag)
             mb.init(p8[i][0], p8[i][1]);
-
         else {
             setTimeout("mb.addList()", 350);
             i++;
