@@ -10,6 +10,7 @@
     <script>
         (function () {
             var w = window.innerWidth;
+            var p = 2;
             document.write('<style>');
             document.write("div#containbox {" +
                     "margin-left:-" + (w / 9 * 7 / 2) + "px;" +
@@ -18,12 +19,12 @@
                     "margin-top:" + (w / 9) + "px;" +
                     "margin-bottom:" + (w / 9) + "px;}");
             document.write("#containbox div {" +
-                    "width:" + (w / 9 - 8) + "px;" +
-                    "height:" + (w / 9 - 8) + "px;}");
+                    "width:" + (w / 9 - 2 * p) + "px;" +
+                    "height:" + (w / 9 - 2 * p) + "px;}");
             for (var i = 8; i >= 0; i--)
                 for (var j = 0; j < 7; j++) {
-                    var left = j * w / 9 + 4;
-                    var top = (8 - i) * w / 9 + 4;
+                    var left = j * w / 9 + p;
+                    var top = (8 - i) * w / 9 + p;
                     document.write("#containbox #b" + i + j + "{margin-left:" + left + "px;margin-top:" + top + "px;}\n");
                 }
             var colormap = ['#000', '#00f', '#0b0', '#d00', '#0cc', '#d0d', '#fd8'];
