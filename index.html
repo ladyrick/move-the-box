@@ -32,7 +32,9 @@
                 return Math.random() - 0.5;
             });
             for (i = 0; i < 7; i++) {
-                document.write("#containbox ." + "abcdefg"[i] + "{box-shadow:0 0 10px " + colormap[i] + ";background-color:" + colormap[i] + ";}\n");
+                document.write("#containbox ." + "abcdefg"[i] + "{box-shadow:0 0 " + (2 * p) +
+                        "px " + colormap[i] + ";background-color:" + colormap[i] + ";}\n"
+                );
             }
             document.write('</style>');
         })();
