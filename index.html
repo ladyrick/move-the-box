@@ -15,12 +15,12 @@
                     var top = (8 - i) * 60 + 1;
                     document.write("#containbox #b" + i + j + "{margin-left:" + left + "px;margin-top:" + top + "px;}\n");
                 }
-            var colormap = ['050', '0a5', '05a', '005', '500', '5a0', '5aa', '50a', 'a50', 'aa5', 'a5a', 'a05'];
+            var colormap = ['#000', '#00f', '#0b0', '#d00', '#0cc', '#d0d', '#fd8'];
             colormap.sort(function () {
                 return Math.random() - 0.5;
             });
-            for (i = 0; i < 12; i++) {
-                document.write("#containbox ." + String.fromCharCode(97 + i) + "{box-shadow:0 0 5px #" + colormap[i] + ";background-color:#" + colormap[i] + ";}\n");
+            for (i = 0; i < 7; i++) {
+                document.write("#containbox ." + "abcdefg"[i] + "{box-shadow:0 0 5px " + colormap[i] + ";background-color:" + colormap[i] + ";}\n");
             }
             document.write('</style>');
         })();
