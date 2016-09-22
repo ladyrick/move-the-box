@@ -11,8 +11,8 @@
             document.write('<style>');
             for (var i = 8; i >= 0; i--)
                 for (var j = 0; j < 7; j++) {
-                    var left = j * 60 + 1;
-                    var top = (8 - i) * 60 + 1;
+                    var left = j * 90 + 4;
+                    var top = (8 - i) * 90 + 4;
                     document.write("#containbox #b" + i + j + "{margin-left:" + left + "px;margin-top:" + top + "px;}\n");
                 }
             var colormap = ['#000', '#00f', '#0b0', '#d00', '#0cc', '#d0d', '#fd8'];
@@ -20,7 +20,7 @@
                 return Math.random() - 0.5;
             });
             for (i = 0; i < 7; i++) {
-                document.write("#containbox ." + "abcdefg"[i] + "{box-shadow:0 0 5px " + colormap[i] + ";background-color:" + colormap[i] + ";}\n");
+                document.write("#containbox ." + "abcdefg"[i] + "{box-shadow:0 0 10px " + colormap[i] + ";background-color:" + colormap[i] + ";}\n");
             }
             document.write('</style>');
         })();
