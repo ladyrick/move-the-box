@@ -403,15 +403,20 @@ mb.init = function (steplimit, puzzle) {
 };
 
 var i = 0;
-var flag = true;
+var j = 0;
+
 function t() {
-    if (i < 24) {
-        if (flag)
-            mb.init(p8[i][0], p8[i][1]);
-        else {
-            setTimeout("mb.addList()", 350);
+    mb.init(p[i][j][0], p[i][j][1]);
+    setTimeout(function () {
+        mb.autoSolve();
+        j++;
+        if (j === 24) {
+            j = 0;
             i++;
         }
-        flag = !flag;
-    }
+        if (i === 7 && j === 23)
+            return;
+        setTimeout(t, mb.stepNum * 350);
+    }, 350);
+
 }
