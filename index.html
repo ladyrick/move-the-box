@@ -21,6 +21,7 @@
             document.write("#containbox div {" +
                     "width:" + (w / 9 - 2 * p) + "px;" +
                     "height:" + (w / 9 - 2 * p) + "px;}");
+            document.write("#containbox #cityselect .city{font-size:"+(w/18)+"px;}");
             for (var i = 8; i >= 0; i--)
                 for (var j = 0; j < 7; j++) {
                     var left = j * w / 9 + p;
@@ -50,6 +51,16 @@
                 }
         })();
     </script>
+    <div id="cityselect">
+        <div class="city" onclick="mb.selectCity(0)">Boston</div>
+        <div class="city" onclick="mb.selectCity(1)">Osaka</div>
+        <div class="city" onclick="mb.selectCity(2)">Hamburg</div>
+        <div class="city" onclick="mb.selectCity(3)">Rotterdam</div>
+        <div class="city" onclick="mb.selectCity(4)">London</div>
+        <div class="city" onclick="mb.selectCity(5)">Shanghai</div>
+        <div class="city" onclick="mb.selectCity(6)">North Pole</div>
+        <div class="city" onclick="mb.selectCity(7)">Paris</div>
+    </div>
 </div>
 </body>
 </html>

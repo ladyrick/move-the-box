@@ -1,4 +1,4 @@
-div#containbox {
+#containbox {
     position: absolute;
     left: 50%;
     margin-left: -315px;
@@ -43,4 +43,21 @@ div#containbox {
 
 #containbox.wait {
     cursor: wait;
+}
+
+#containbox #cityselect {
+    width: 100%;
+    height: 100%;
+    background-color: antiquewhite;
+}
+
+#containbox #cityselect .city {
+    position: relative;
+    height: 7.35%;
+    width: 70%;
+    margin: 6% 15% 0 15%;
+    text-align: center;
+    font-size: 250%;
+    font-family: sans-serif;
+    background-color: aquamarine;
 }
